@@ -7,7 +7,7 @@ find_library(HSL_LIBRARIES libhsl_mc64.a
 
 set(HSL_INCDIR ${HSL_DIR}/include)
 set(HSL_LIBDIR ${HSL_DIR}/lib)
-set(HSL_LIBS -lhsl_mc64 -L${HSL_LIBDIR})
+set(HSL_LIBS -lhsl_mc64)
 set(HSL_FLAGS HAVE_HSL)
 
 

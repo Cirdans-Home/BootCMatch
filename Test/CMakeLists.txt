@@ -25,3 +25,14 @@ endforeach()
 
 # Directory with the scripts
 install(DIRECTORY RUNS DESTINATION samples)
+
+# Install Makefile from template and source files
+string(REPLACE ";" " " testprogram "${testprogram}")
+configure_file(
+	"${CMAKE_CURRENT_SOURCE_DIR}/Makefile.in"
+	"${CMAKE_INSTALL_PREFIX}/samples/Makefile"
+	@ONLY
+)
+install(FILES ioutil.c testbootstrap.c testkbootsolvers.c testsolving.c ioutil.h
+	DESTINATION samples
+	COMPONENT Runtime)

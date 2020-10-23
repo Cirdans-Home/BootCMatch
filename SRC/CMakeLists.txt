@@ -28,6 +28,8 @@ target_link_libraries( BCM PUBLIC -lm ${BLAS_LIBRARIES}
 																			${SUPERLU_LIBRARIES}
 																			-lgfortran)
 
+target_link_directories( BCM PUBLIC ${SPRAL_LIBDIR} ${HSL_LIBDIR})																			
+
 target_compile_definitions( BCM PUBLIC ${HSL_FLAGS}
 																			 ${SPRAL_FLAGS}
 																			 ${SUPERLU_FLAGS})

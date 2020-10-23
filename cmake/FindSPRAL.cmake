@@ -7,7 +7,7 @@ find_library(SPRAL_LIBRARIES libspral.a
 
 set(SPRAL_INCDIR ${SPRAL_DIR}/include)
 set(SPRAL_LIBDIR ${SPRAL_DIR}/lib)
-set(SPRAL_LIBS -lspral -L${SPRAL_LIBDIR})
+set(SPRAL_LIBS -lspral)
 set(SPRAL_FLAGS HAVE_SPRAL)
 
 include(FindPackageHandleStandardArgs)

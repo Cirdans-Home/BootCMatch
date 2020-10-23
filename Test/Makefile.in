@@ -1,0 +1,54 @@
+# Inpute Makefile for automatic CMake Generation
+
+prefix       = @CMAKE_INSTALL_PREFIX@
+exec_prefix  = $(prefix)/samples/RUNS
+includedir   = @CMAKE_INSTALL_PREFIX@/include
+libdir       = @CMAKE_INSTALL_PREFIX@/lib
+
+CC       = @CMAKE_C_COMPILER@
+CFLAGS   = @CMAKE_C_FLAGS@
+LDFLAGS  = @LDFLAGS@
+LIBS     =  -lm -lBCM -lsuperlu @SPRAL_LIBS@ @HSL_LIBS@
+
+LINKFLAGS = -Wl,-rpath,${libdir}
+
+# -----------------------------------------------------------------------------------------
+
+TMP_INCS  = ${includedir} @SUPERLU_INCLUDE_DIR@ @HSL_INCDIR@ @SPRAL_INCDIR@
+INCLUDES  = $(addprefix -I, ${TMP_INCS})
+LIBRARIES = ${LIBS} -lgfortran -L@SPRAL_LIBDIR@ -L@HSL_LIBDIR@
+
+# -----------------------------------------------------------------------------------------
+
+EXAMPLES = @testprogram@
+EXAMPLES_DEPENDENCIES = ioutil
+
+OBJECTS = ${EXAMPLES:=.o}
+OBJECTS_DEPENDENCIES = ${EXAMPLES_DEPENDENCIES:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .c
+
+.c.o :
+	${CC} ${CPPFLAGS} ${CFLAGS} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: examples
+
+examples: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${CC} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${CFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS}" ; \
+	  ${CC} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${CFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS} ; \
+		mv $${i} ${exec_prefix} ; \
+	done
+
+${OBJECTS}: ${OBJECTS_DEPENDENCIES}
+
+clean:
+	rm -f ${OBJECTS_DEPENDENCIES}
+	rm -f ${OBJECTS}
+	rm -f ${exec_prefix}/${EXAMPLES}
+
+# -----------------------------------------------------------------------------------------
