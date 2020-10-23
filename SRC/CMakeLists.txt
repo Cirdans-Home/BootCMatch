@@ -1,0 +1,40 @@
+# We build here the libBCM library
+
+add_subdirectory(utilities)
+add_subdirectory(MATVEC)
+add_subdirectory(AMG)
+add_subdirectory(BOOTAMG)
+add_subdirectory(LINSOLVERS)
+
+add_library(BCM ${utilities_sources}
+								${matvec_sources}
+								${amg_sources}
+								${bootamg_sources}
+								${linsolvers_sources})
+
+target_include_directories( BCM PUBLIC  ${CMAKE_SOURCE_DIR}/SRC/utilities
+																			 	${CMAKE_SOURCE_DIR}/SRC/MATVEC
+																				${CMAKE_SOURCE_DIR}/SRC/AMG
+																				${CMAKE_SOURCE_DIR}/SRC/BOOTAMG
+																				${CMAKE_SOURCE_DIR}/SRC/LINSOLVERS
+																				${SUPERLU_INCLUDE_DIR}
+																				${HSL_INCDIR}
+																				${SPRAL_INCDIR})
+
+target_link_libraries( BCM PUBLIC -lm ${BLAS_LIBRARIES}
+																			${LAPACK_LIBRARIES}
+																			${SPRAL_LIBS}
+																			${HSL_LIBS}
+																			${SUPERLU_LIBRARIES}
+																			-lgfortran)
+
+target_compile_definitions( BCM PUBLIC ${HSL_FLAGS}
+																			 ${SPRAL_FLAGS}
+																			 ${SUPERLU_FLAGS})
+
+set_property(TARGET BCM PROPERTY
+		PUBLIC_HEADER ${amg_header}
+									${bootamg_header}
+									${linsolvers_header}
+									${matvec_header}
+									${utilities_header})
