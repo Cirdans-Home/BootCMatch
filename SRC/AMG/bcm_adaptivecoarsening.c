@@ -325,9 +325,11 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 		bcm_CSRMatrixTranspose(AH, &AHT, 1);
 		AH_full=bcm_CSRMatrixAdd(AH,AHT);
 		nzeros = bcm_CSRMatrixNumNonzeros(AH_full);
+		nrows_L = bcm_CSRMatrixNumRows(AH_full);
 
 		/* The matching algorithm needs for the matrix to be in COO format, while
 		 * we have in CSR format... we need to convert it: */
+		p = (int *) calloc(nrows_L,sizeof(int));
 		s = (int *) malloc(nzeros*sizeof(int));
 		t = (int *) malloc(nzeros*sizeof(int));
 		edgeWght = (double *) malloc(nzeros*sizeof(double));
@@ -344,7 +346,7 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 		free(s);
 		free(t);
 		free(edgeWght);
-
+		break;
 	/* Call function for 2/3-epsilon lambda-weighted matching */
 	case MATCH_LAMBDA23:
 		fprintf(stderr, "Calling 2/3-ε Lambda Weighted Matching.\n");
@@ -352,9 +354,11 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 		bcm_CSRMatrixTranspose(AH, &AHT, 1);
 		AH_full=bcm_CSRMatrixAdd(AH,AHT);
 		nzeros = bcm_CSRMatrixNumNonzeros(AH_full);
+		nrows_L = bcm_CSRMatrixNumRows(AH_full);
 
 		/* The matching algorithm needs for the matrix to be in COO format, while
 		 * we have in CSR format... we need to convert it: */
+	 	p = (int *) calloc(nrows_L,sizeof(int));
 		s = (int *) malloc(nzeros*sizeof(int));
 		t = (int *) malloc(nzeros*sizeof(int));
 		edgeWght = (double *) malloc(nzeros*sizeof(double));
@@ -366,12 +370,12 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 		c_matchLambdaTwoThirdeps(nrows_L,nzeros,s,t,edgeWght,lambda,p);
 
 		/* Free the memory */
-		// bcm_CSRMatrixDestroy(AHT);
-		// bcm_CSRMatrixDestroy(AH_full);
-		// free(s);
-		// free(t);
-		// free(edgeWght);
-
+		bcm_CSRMatrixDestroy(AHT);
+		bcm_CSRMatrixDestroy(AH_full);
+		free(s);
+		free(t);
+		free(edgeWght);
+		break;
 #endif
   default:
     fprintf(stderr,"Error: unknown matching algorithm\n");
