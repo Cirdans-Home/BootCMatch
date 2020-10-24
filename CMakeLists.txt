@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(BootCMatch VERSION 0.9
 									 DESCRIPTION "Bootstrap AMG based on Compatible weighted Matching"
 									 HOMEPAGE_URL "https://psctoolkit.github.io/"
-									 LANGUAGES C Fortran)
+									 LANGUAGES C CXX Fortran)
 
 # Directory with CMAKE modules, used to search for libraries
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -39,6 +39,18 @@ find_package(SUPERLU)
 if(SUPERLU_FOUND)
 	message(STATUS "Found SUPERLU Library.")
 endif(SUPERLU_FOUND)
+
+# TwoThird Approximate matching with λ parameter choice
+option(USE_AMGMatch "Use matchLambdaTwoThirdeps and matchLambdaOpt Algorithms" OFF)
+if(USE_AMGMatch)
+	add_subdirectory(AUXIL/Matchbox)	# Matchbox Library
+	# We look for an external installation of the Lemon Libary, it is required
+	find_package(LEMON REQUIRED)
+	if(LEMON_FOUND)
+		message(STATUS "Found LEMON Library.")
+	endif(LEMON_FOUND)
+	add_subdirectory(AUXIL/AMGMatch)
+endif(USE_AMGMatch)
 
 #-----------------------------------------------------------------------------#
 # Start The compilation of the Library
