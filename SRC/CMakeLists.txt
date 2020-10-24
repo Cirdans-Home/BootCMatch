@@ -26,13 +26,15 @@ target_link_libraries( BCM PUBLIC -lm ${BLAS_LIBRARIES}
 																			${SPRAL_LIBS}
 																			${HSL_LIBS}
 																			${SUPERLU_LIBRARIES}
+																			${AUXIL_LIBS}
 																			-lgfortran)
 
-target_link_directories( BCM PUBLIC ${SPRAL_LIBDIR} ${HSL_LIBDIR})																			
+target_link_directories( BCM PUBLIC ${SPRAL_LIBDIR} ${HSL_LIBDIR})
 
 target_compile_definitions( BCM PUBLIC ${HSL_FLAGS}
 																			 ${SPRAL_FLAGS}
-																			 ${SUPERLU_FLAGS})
+																			 ${SUPERLU_FLAGS}
+																			 ${AUXIL_FLAGS})
 
 set_property(TARGET BCM PROPERTY
 		PUBLIC_HEADER ${amg_header}

@@ -1,10 +1,10 @@
-/* 
-                BootCMatch 
+/*
+                BootCMatch
      Bootstrap AMG based on Compatible weighted Matching, version 0.9
     (C) Copyright 2017
                        Pasqua D'Ambra         IAC-CNR, IT
                        Panayot S. Vassilevski Portland State University, OR USA
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
   are met:
@@ -16,7 +16,7 @@
     3. The name of the BootCMatch group or the names of its contributors may
        not be used to endorse or promote products derived from this
        software without specific written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
   TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -28,7 +28,7 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
- 
+
 */
 /******************************************************************************
  *
@@ -50,7 +50,7 @@ bcm_AMGInitialize()
    int      maxcoarsesize; /* maximum size of the coarsest matrix */
    int      sweepnumber; /* number of pairwise aggregation steps */
    int      agg_interp_type; /* 1 for smoothed aggregation, 0 for pure aggregation */
-   int      agg_match_type;  /* 1 for exact matching (HSL-mc64), 2 for auction based matching, 0 for Preis approximate matching */
+   int      agg_match_type;  /* 3 for 2/3 lambda matching (lambda-matchTwoThirdeps) 2 for exact lambda matching (lambda-matchOpt) 1 for exact matching (HSL-mc64), 2 for auction based matching, 0 for Preis approximate matching */
    int      coarse_solver; /* solver to be used on the coarsest level */
    /*     relax_type/coarse_solver = 0 ->  1 sweep of Jacobi
     *     relax_type/coarse_solver = 1 ->  1 sweep of forward Gauss-Seidel
@@ -75,17 +75,17 @@ bcm_AMGInitialize()
 
    /* setup params */
      maxlevels=100;
-     maxcoarsesize=100; 
-     sweepnumber=0; 
-     agg_interp_type=0; 
-     agg_match_type=0; 
-     coarse_solver=9; 
+     maxcoarsesize=100;
+     sweepnumber=0;
+     agg_interp_type=0;
+     agg_match_type=0;
+     coarse_solver=9;
 
    /* CR params */
-     CRrelax_type=0; 
-     CRit=20;  
-     CRrelax_weight=1.0/3.0; 
-     CRratio=0.3; 
+     CRrelax_type=0;
+     CRit=20;
+     CRrelax_weight=1.0/3.0;
+     CRratio=0.3;
 
    /*-----------------------------------------------------------------------
     * Create the bcm_AMGBuildData structure and return
@@ -118,7 +118,7 @@ bcm_AMGBuildSetMaxLevels( void *data,
 {
    int ierr = 0;
    bcm_AMGBuildData  *amg_data = data;
- 
+
    bcm_AMGBuildDataMaxLevels(amg_data) = max_levels;
 
    return (ierr);
@@ -155,11 +155,11 @@ bcm_AMGBuildSetMaxCoarseSize( void     *data,
 {
    int ierr = 0;
    bcm_AMGBuildData  *amg_data = data;
- 
+
    bcm_AMGBuildDataMaxCoarseSize(amg_data) = maxcoarse_size;
 
    return (ierr);
-} 
+}
 
 int
 bcm_AMGBuildSetSweepNumber( void     *data,
@@ -172,7 +172,7 @@ bcm_AMGBuildSetSweepNumber( void     *data,
 
    return (ierr);
 }
- 
+
 int
 bcm_AMGBuildSetCRRelaxType( void     *data,
                            int      crrelax_type )
@@ -192,7 +192,7 @@ bcm_AMGBuildSetCRRelaxWeight( void     *data,
    int ierr = 0;
    bcm_AMGBuildData  *amg_data = data;
 
-   bcm_AMGBuildDataCRRelaxWeight(amg_data) = crrelax_weight; 
+   bcm_AMGBuildDataCRRelaxWeight(amg_data) = crrelax_weight;
 
    return (ierr);
 }
@@ -204,7 +204,7 @@ bcm_AMGBuildSetCRIterations( void     *data,
    int ierr = 0;
    bcm_AMGBuildData  *amg_data = data;
 
-   bcm_AMGBuildDataCRIterations(amg_data) = criterations; 
+   bcm_AMGBuildDataCRIterations(amg_data) = criterations;
 
    return (ierr);
 }
@@ -216,7 +216,7 @@ bcm_AMGBuildSetCRRatio( void     *data,
    int ierr = 0;
    bcm_AMGBuildData  *amg_data = data;
 
-   bcm_AMGBuildDataCRratio(amg_data) = crratio; 
+   bcm_AMGBuildDataCRratio(amg_data) = crratio;
 
    return (ierr);
 }
@@ -227,13 +227,13 @@ bcm_AMGBuildSetCoarseSolver( void     *data,
 {
    int ierr = 0;
    bcm_AMGBuildData  *amg_data = data;
- 
+
    bcm_AMGBuildDataCoarseSolver(amg_data) = coarse_solver;
 
    return (ierr);
-} 
+}
 
-int 
+int
 bcm_AMGBuildDataDestroy(void *data)
 
 {
@@ -274,7 +274,7 @@ bcm_AMGHierarchyCreate(int maxlevels)
   return amg_hierarchy;
 }
 
-int 
+int
 bcm_AMGHierarchyDestroy(bcm_AMGHierarchy *amg_hierarchy)
 
 {
@@ -326,7 +326,7 @@ bcm_AMGHierarchyDestroy(bcm_AMGHierarchy *amg_hierarchy)
    return ierr;
 }
 
-int 
+int
 bcm_AMGHierarchyInitialize(bcm_AMGHierarchy *amg_hierarchy)
 {
    int num_levels=bcm_AMGHierarchyNumLevels(amg_hierarchy);
@@ -360,7 +360,7 @@ bcm_AMGCycleInitialize()
 
    /* cycle type params */
    int        cycle_type; /* 0 for V-cycle, 2 for W-cycle, 1 for G-cycle, 3 for k-cycle*/
-   int        *num_grid_sweeps; /* number of sweeps on a fixed level in case of G-cycle */ 
+   int        *num_grid_sweeps; /* number of sweeps on a fixed level in case of G-cycle */
 
    int        relax_type; /* type of pre/post relaxation/smoothing */
    int        prerelax_number; /* number of pre smoothing steps */
@@ -374,13 +374,13 @@ bcm_AMGCycleInitialize()
 
    /* setup params */
      cycle_type=0;
-     relax_type=0; 
-     prerelax_number=1; 
-     postrelax_number=1; 
-     relax_weight=1.0; 
+     relax_type=0;
+     prerelax_number=1;
+     postrelax_number=1;
+     relax_weight=1.0;
      num_grid_sweeps=NULL;
 
-     
+
    /*-----------------------------------------------------------------------
     * Create the bcm_AMGApplyData structure and return
     *-----------------------------------------------------------------------*/
@@ -407,7 +407,7 @@ bcm_AMGSetCycleType( void *data,
 {
    int ierr = 0;
    bcm_AMGApplyData  *amg_cycle = data;
- 
+
    bcm_AMGApplyDataCycleType(amg_cycle) = cycle_type;
 
    return (ierr);
@@ -419,7 +419,7 @@ bcm_AMGSetNumGridSweeps( void     *data,
 {
    int ierr = 0;
    bcm_AMGApplyData  *amg_cycle = data;
-   
+
    bcm_AMGApplyDataGridSweeps(amg_cycle)=num_grid_sweeps;
 
    return (ierr);
@@ -431,11 +431,11 @@ bcm_AMGSetRelaxType( void     *data,
 {
    int ierr = 0;
    bcm_AMGApplyData  *amg_cycle = data;
- 
+
    bcm_AMGApplyDataRelaxType(amg_cycle) = relax_type;
 
    return (ierr);
-} 
+}
 
 
 int
@@ -444,11 +444,11 @@ bcm_AMGSetPreRelaxSteps( void     *data,
 {
    int ierr = 0;
    bcm_AMGApplyData  *amg_cycle = data;
- 
+
    bcm_AMGApplyDataPreRelax(amg_cycle) = prerelax_number;
 
    return (ierr);
-} 
+}
 
 int
 bcm_AMGSetPostRelaxSteps( void     *data,
@@ -456,11 +456,11 @@ bcm_AMGSetPostRelaxSteps( void     *data,
 {
    int ierr = 0;
    bcm_AMGApplyData  *amg_cycle = data;
- 
+
    bcm_AMGApplyDataPostRelax(amg_cycle) = postrelax_number;
 
    return (ierr);
-} 
+}
 
 int
 bcm_AMGSetRelaxWeight( void     *data,
@@ -468,13 +468,13 @@ bcm_AMGSetRelaxWeight( void     *data,
 {
    int ierr = 0;
    bcm_AMGApplyData  *amg_cycle = data;
- 
+
    bcm_AMGApplyDataRelaxWeight(amg_cycle) = relax_weight;
 
    return (ierr);
-} 
+}
 
-int 
+int
 bcm_AMGApplyDataDestroy(void *data)
 
 {

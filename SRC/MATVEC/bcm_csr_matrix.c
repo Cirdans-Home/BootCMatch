@@ -69,7 +69,7 @@ bcm_CSRMatrixCreate( int num_rows,
  * bcm_CSRMatrixDestroy
  *--------------------------------------------------------------------------*/
 
-int 
+int
 bcm_CSRMatrixDestroy( bcm_CSRMatrix *matrix )
 {
   int  ierr=0;
@@ -92,7 +92,7 @@ bcm_CSRMatrixDestroy( bcm_CSRMatrix *matrix )
  * bcm_CSRMatrixInitialize
  *--------------------------------------------------------------------------*/
 
-int 
+int
 bcm_CSRMatrixInitialize( bcm_CSRMatrix *matrix )
 {
   int  num_rows     = bcm_CSRMatrixNumRows(matrix);
@@ -114,7 +114,7 @@ bcm_CSRMatrixInitialize( bcm_CSRMatrix *matrix )
  * bcm_CSRMatrixSetDataOwner
  *--------------------------------------------------------------------------*/
 
-int 
+int
 bcm_CSRMatrixSetDataOwner( bcm_CSRMatrix *matrix,
 			   int              owns_data )
 {
@@ -144,7 +144,7 @@ bcm_CSRMatrixRead( char *file_name )
   int      max_col = 0;
 
   int      file_base = 1;
-   
+
   int      j;
 
   /*----------------------------------------------------------
@@ -209,9 +209,9 @@ bcm_CSRMatrixPrint( bcm_CSRMatrix *matrix,
   int     *matrix_j;
   int      num_rows;
   int      num_cols, nnz;
-   
+
   int      file_base = 1;
-   
+
   int      j;
 
   int      ierr = 0;
@@ -278,7 +278,7 @@ bcm_CSRMatrixPrintMM( bcm_CSRMatrix *matrix,
     fprintf(stderr,"Why do you want me to print a NULL matrix?\n");
     return(1);
   }
-    
+
 
   fp = fopen(file_name, "w");
   ierr=bcm_CSRMatrixPrintMMfp(matrix,fp);
@@ -297,9 +297,9 @@ bcm_CSRMatrixPrintMMfp( bcm_CSRMatrix *matrix,  FILE    *fp)
   int     *matrix_j;
   int      num_rows;
   int      num_cols, nnz;
-   
+
   int      file_base = 1;
-   
+
   int      i,j;
 
   int      ierr = 0;
@@ -312,7 +312,7 @@ bcm_CSRMatrixPrintMMfp( bcm_CSRMatrix *matrix,  FILE    *fp)
     fprintf(stderr,"Why do you want me to print a NULL matrix?\n");
     return(1);
   }
-    
+
   matrix_data = bcm_CSRMatrixData(matrix);
   matrix_i    = bcm_CSRMatrixI(matrix);
   matrix_j    = bcm_CSRMatrixJ(matrix);
@@ -412,12 +412,12 @@ bcm_CSRMatrixPrintHB( bcm_CSRMatrix *matrix_input,
 
 /*--------------------------------------------------------------------------
  * bcm_CSRMatrixCopy:
- * copys A to B, 
+ * copys A to B,
  * if copy_data = 0 only the structure of A is copied to B.
- * the routine does not check if the dimensions of A and B match !!! 
+ * the routine does not check if the dimensions of A and B match !!!
  *--------------------------------------------------------------------------*/
 
-int 
+int
 bcm_CSRMatrixCopy( bcm_CSRMatrix *A, bcm_CSRMatrix *B, int copy_data )
 {
   int  ierr=0;
@@ -518,10 +518,10 @@ bcm_CSRMatrix * bcm_CSRMatrixClone( bcm_CSRMatrix * A )
   int * B_j;
   double * B_data;
   int i, j;
-  
+
   //fprintf(stderr,"Cloning: %d %d %d\n", num_rows, num_cols, num_nonzeros );
   bcm_CSRMatrix * B = bcm_CSRMatrixCreate( num_rows, num_cols, num_nonzeros );
-  
+
   bcm_CSRMatrixInitialize( B );
 
   A_i = bcm_CSRMatrixI(A);
@@ -537,6 +537,53 @@ bcm_CSRMatrix * bcm_CSRMatrixClone( bcm_CSRMatrix * A )
 
   return B;
 }
+/*--------------------------------------------------------------------------
+ * bcm_CSRMatrixToCOO
+ * Converts a CSR matrix into the three vectors of the COO format.
+ *--------------------------------------------------------------------------*/
+int bcm_CSRMatrixToCOO( bcm_CSRMatrix * A, int *ia, int *ja, double *val){
+
+	double  *matrix_data;
+	int     *matrix_i;
+	int     *matrix_j;
+	int      num_rows;
+	int      num_cols, nnz;
+
+	int      file_base = 1;
+
+	int      i,j,counter;
+
+	matrix_data = bcm_CSRMatrixData(A);
+	matrix_i    = bcm_CSRMatrixI(A);
+	matrix_j    = bcm_CSRMatrixJ(A);
+	num_rows    = bcm_CSRMatrixNumRows(A);
+	num_cols    = bcm_CSRMatrixNumCols(A);
+	nnz         = bcm_CSRMatrixNumNonzeros(A);
+
+	FILE *debugout;
+	debugout = fopen("debugout.dat","w+");
+
+	counter = 0;
+	for (i = 0; i < num_rows; i++)     {
+		for (j=matrix_i[i]; j<matrix_i[i+1]; j++) {
+			ia[counter] = i;
+			ja[counter] = matrix_j[j];
+			val[counter] = matrix_data[j];
+			fprintf(debugout, "%d %d %f\n",ia[counter]+1,ja[counter]+1,val[counter] );
+			counter++;
+		}
+	}
+
+	fclose(debugout);
+
+	if( counter == nnz ){
+		return(0);
+	}else{
+		return(-1);
+	}
+
+}
+
 /*--------------------------------------------------------------------------
  * bcm_CSRMatrixTriU
  * Creates and returns a copy of the upper triangle of A starting from diagonal L.
@@ -562,7 +609,7 @@ bcm_CSRMatrix * bcm_CSRMatrixTriU( bcm_CSRMatrix * A, int L )
   B_i = (int *) calloc(num_rows+1, sizeof(int));
 
   B_i[i]=0;
-  for ( k=0; k< num_rows; ++k) 
+  for ( k=0; k< num_rows; ++k)
     {
       num_nnzrowB=0;
       for (j=A_i[k]; j<A_i[k+1]; ++j)
@@ -575,7 +622,7 @@ bcm_CSRMatrix * bcm_CSRMatrixTriU( bcm_CSRMatrix * A, int L )
       B_i[i]=B_i[i-1]+num_nnzrowB;
     }
   B_i[num_rows]=num_nonzerosB;
-   
+
   B = bcm_CSRMatrixCreate(num_rows, num_cols, num_nonzerosB);
 
   bcm_CSRMatrixInitialize(B);
@@ -589,7 +636,7 @@ bcm_CSRMatrix * bcm_CSRMatrixTriU( bcm_CSRMatrix * A, int L )
     {
     for(j=A_i[k]; j<A_i[k+1]; j++)
 	{
-	  if(A_j[j] >= k+L) 
+	  if(A_j[j] >= k+L)
 	    {
 	      B_j[l]=A_j[j];
 	      B_data[l]=A_data[j];
@@ -625,7 +672,7 @@ bcm_CSRMatrix *bcm_CSRMatrixTriL( bcm_CSRMatrix * A, int L )
   num_nonzerosB=0;
   i=0;
   B_i[i]=0;
-  for ( k=0; k< num_rows; ++k) 
+  for ( k=0; k< num_rows; ++k)
     {
       num_nnzrowB=0;
       for (j=A_i[k]; j<A_i[k+1]; ++j)
@@ -653,7 +700,7 @@ bcm_CSRMatrix *bcm_CSRMatrixTriL( bcm_CSRMatrix * A, int L )
     {
       for (j=A_i[k]; j<A_i[k+1]; ++j)
 	{
-	  if(A_j[j] <= k-L) 
+	  if(A_j[j] <= k-L)
 	    {
 	      B_j[l]=A_j[j];
 	      B_data[l]=A_data[j];
@@ -689,7 +736,7 @@ bcm_Vector * bcm_CSRMatrixDiag( bcm_CSRMatrix * A )
     {
       for (j=A_i[k]; j<A_i[k+1]; ++j)
 	{
-	  if(A_j[j] == k)  
+	  if(A_j[j] == k)
 	    {
 	      w_data[k]=A_data[j];
 	      if(w_data[k] < DBL_EPSILON) printf("Warning: NULL DIAGONAL ELEMENT IN DIAGONAL MATRIX\n");
@@ -718,7 +765,7 @@ bcm_COO2CSRMatrixRead( char *file_name )
   int      max_col = 0;
 
   int      file_base = 1;
-   
+
   int      i, j, k, k0, iad;
   double   x;
 
@@ -818,7 +865,7 @@ bcm_MM2CSRMatrixRead( char *file_name )
   int      max_col = 0, is_general=0, is_symmetric=0;
 
   int      file_base = 1;
-   
+
   int      i, j, k, k0, iad;
   double   x;
 
@@ -839,7 +886,7 @@ bcm_MM2CSRMatrixRead( char *file_name )
     fclose(fp);
     return(NULL);
   }
-  
+
   if (strcmp(storage_scheme,"general")==0) {
     allc_nonzeros = fr_nonzeros;
     is_general=1;
@@ -849,9 +896,9 @@ bcm_MM2CSRMatrixRead( char *file_name )
   } else {
     fprintf(stderr,"Error: unhandled storage scheme '%s'\n",storage_scheme);
     fclose(fp);
-    return(NULL);   
+    return(NULL);
   }
-  
+
   matrix_cooi = (int *) calloc(allc_nonzeros, sizeof(int));
   matrix_cooj = (int *) calloc(allc_nonzeros, sizeof(int));
   matrix_value = (double *) calloc(allc_nonzeros, sizeof(double));
@@ -862,7 +909,7 @@ bcm_MM2CSRMatrixRead( char *file_name )
 	if (fgets(buffer,BUFSIZE,fp) != NULL) {
 	  sscanf(buffer, "%d %d %le", &matrix_cooi[j], &matrix_cooj[j], &matrix_value[j]);
 	  matrix_cooi[j] -= file_base;
-	  matrix_cooj[j] -= file_base;	
+	  matrix_cooj[j] -= file_base;
 	  if (matrix_cooj[j] > max_col)
 	    {
 	      max_col = matrix_cooj[j];
@@ -963,7 +1010,7 @@ bcm_MM2CSRMatrixRead( char *file_name )
 }
 /*--------------------------------------------------------------------------
  * bcm_CSRMatrixDiagScal
- * Apply diagonal scaling to matrix A: B=D^-1A 
+ * Apply diagonal scaling to matrix A: B=D^-1A
  *--------------------------------------------------------------------------*/
 
 bcm_CSRMatrix * bcm_CSRMatrixDiagScal( bcm_CSRMatrix * A, bcm_Vector *D )
@@ -981,7 +1028,7 @@ bcm_CSRMatrix * bcm_CSRMatrixDiagScal( bcm_CSRMatrix * A, bcm_Vector *D )
   int * B_i;
   int * B_j;
   double *B_data;
-  int j,k; 
+  int j,k;
 
   B = bcm_CSRMatrixCreate(num_rows, num_cols, num_nnzA);
   bcm_CSRMatrixInitialize(B);
@@ -989,12 +1036,12 @@ bcm_CSRMatrix * bcm_CSRMatrixDiagScal( bcm_CSRMatrix * A, bcm_Vector *D )
   B_j = bcm_CSRMatrixJ(B);
   B_data = bcm_CSRMatrixData(B);
 
-  for ( k=0; k< num_rows; ++k) 
+  for ( k=0; k< num_rows; ++k)
     {
       B_i[k]=A_i[k];
     }
   B_i[num_rows]=num_nnzA;
-  for(k=0; k<num_nnzA; k++) 
+  for(k=0; k<num_nnzA; k++)
    {
       B_data[k]=A_data[k];
       B_j[k]=A_j[k];

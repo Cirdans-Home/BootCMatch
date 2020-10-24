@@ -1,10 +1,10 @@
-/* 
-                BootCMatch 
+/*
+                BootCMatch
      Bootstrap AMG based on Compatible Matching version 0.9
     (C) Copyright 2017
                        Pasqua D'Ambra    IAC-CNR
                        Panayot S. Vassilevski CACR-LLNL
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
   are met:
@@ -16,7 +16,7 @@
     3. The name of the BootCMatch group or the names of its contributors may
        not be used to endorse or promote products derived from this
        software without specific written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
   TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -28,7 +28,7 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
- 
+
 */
 #ifndef BCM_MATVEC_H_
 #define BCM_MATVEC_H_
@@ -133,6 +133,7 @@ int bcm_CSRMatrixPrintHB ( bcm_CSRMatrix *matrix_input , char *file_name );
 int bcm_CSRMatrixPrintMM( bcm_CSRMatrix *matrix, char            *file_name );
 int bcm_CSRMatrixPrintMMfp( bcm_CSRMatrix *matrix, FILE *fp );
 int bcm_CSRMatrixCopy ( bcm_CSRMatrix *A , bcm_CSRMatrix *B , int copy_data );
+int bcm_CSRMatrixToCOO( bcm_CSRMatrix * A, int *ia, int *ja, double *val);
 bcm_CSRMatrix * bcm_CSRMatrixCloneStruct ( bcm_CSRMatrix *A );
 bcm_CSRMatrix * bcm_CSRMatrixClone ( bcm_CSRMatrix *A );
 bcm_CSRMatrix * bcm_CSRMatrixTriU( bcm_CSRMatrix * A, int L );
@@ -167,6 +168,6 @@ double bcm_VectorNorm( bcm_Vector *vector );
 bcm_Vector * bcm_VectorDiagScal( bcm_Vector *u, bcm_Vector * D );
 
 /* csr_relax.c */
-int  bcm_CSRMatrixRelax( bcm_CSRMatrix *A, bcm_CSRMatrix *L, bcm_CSRMatrix *U, bcm_Vector *D, bcm_Vector *f, int relax_type, double relax_weight, bcm_Vector *u); 
+int  bcm_CSRMatrixRelax( bcm_CSRMatrix *A, bcm_CSRMatrix *L, bcm_CSRMatrix *U, bcm_Vector *D, bcm_Vector *f, int relax_type, double relax_weight, bcm_Vector *u);
 
 #endif

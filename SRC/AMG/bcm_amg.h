@@ -1,10 +1,10 @@
-/* 
-                BootCMatch 
+/*
+                BootCMatch
      Bootstrap AMG based on Compatible weighted Matching version 0.9
     (C) Copyright 2017
                        Pasqua D'Ambra    IAC-CNR
                        Panayot S. Vassilevski Portland State University, OR USA
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
   are met:
@@ -16,7 +16,7 @@
     3. The name of the BootCMatch group or the names of its contributors may
        not be used to endorse or promote products derived from this
        software without specific written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
   TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -28,7 +28,7 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
- 
+
 */
 #ifndef BCM_AMG_H_
 #define BCM_AMG_H_
@@ -53,7 +53,7 @@ typedef struct {
 typedef struct
 {
   /* data generated in the setup phase */
-  
+
   bcm_CSRMatrix **A_array; /*array of coarse matrices including the fine ones*/
   bcm_CSRMatrix **P_array; /*array of prolongators */
   bcm_CSRMatrix **L_array; /* lower triangular part of coarse matrices */
@@ -66,7 +66,7 @@ typedef struct
   double        op_cmplx;  /* operator complexity of the hierarchy for V-cycle*/
   double        op_wcmplx;  /* operator complexity of the hierarchy for W-cycle*/
   double        avg_cratio;  /* average of coarsening ratio of the hierarchy */
-  
+
 } bcm_AMGHierarchy;
 
 /*--------------------------------------------------------------------------
@@ -99,7 +99,7 @@ typedef struct
    int      maxcoarsesize; /* maximum size of the coarsest matrix */
    int      sweepnumber; /* number of pairwise aggregation steps. Currently 0 for pairwise and 1 for double pairwise */
    int      agg_interp_type; /* 1 for smoothed aggregation, 0 for pure aggregation */
-   int      agg_match_type; /* 1 for exact matching (HSL-mc64), 2 for auction based matching, 0 for Preis approximate matching */
+   int      agg_match_type;  /* 4 for 2/3 lambda matching (lambda-matchTwoThirdeps) 3 for exact lambda matching (lambda-matchOpt) 1 for exact matching (HSL-mc64), 2 for auction based matching, 0 for Preis approximate matching */
    int        coarse_solver; /* solver to be used on the coarsest level */
    /*     relax_type/coarse_solver = 0 ->  1 sweep of Jacobi
     *     relax_type/coarse_solver = 1 ->  1 sweep of Gauss-Seidel
@@ -110,11 +110,11 @@ typedef struct
    int      CRrelax_type; /* to choose relaxation scheme for Compatible Relaxation */
    double   CRrelax_weight; /* weight for weighted Jacobi in CR */
    int      CRit;  /* number of iterations for Compatible Relaxation */
-   double   CRratio; /* optimal convergence ratio in Compatible Relaxation to stop coarsening*/  
+   double   CRratio; /* optimal convergence ratio in Compatible Relaxation to stop coarsening*/
 
    /* problem data */
    bcm_CSRMatrix  *A;   /* problem matrix */
-   bcm_Vector  *w;   /* current smooth vector for building new hierarchy: NB In the bootstrap process 
+   bcm_Vector  *w;   /* current smooth vector for building new hierarchy: NB In the bootstrap process
 			we update it at each new step */
 
 } bcm_AMGBuildData;
@@ -146,7 +146,7 @@ typedef struct
 
    /* cycle type params */
    int        cycle_type; /* 0 for V-cycle, 2 for W-cycle, 1 for G-cycle */
-   int        *num_grid_sweeps; /* number of sweeps on a fixed level in case of G-cycle */ 
+   int        *num_grid_sweeps; /* number of sweeps on a fixed level in case of G-cycle */
 
    int        relax_type; /* type of pre/post relaxation/smoothing */
    int        prerelax_number; /* number of pre smoothing steps */
@@ -207,5 +207,10 @@ bcm_CSRMatrix * bcm_CSRMatchingAgg(bcm_CSRMatrix *A, bcm_Vector **w,
 				   int cr_it, int cr_relax_type, double cr_relax_weight);
 int bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int match_type);
 bcm_AMGHierarchy * bcm_AdaptiveCoarsening(bcm_AMGBuildData *amg_data);
+
+#ifdef HAVE_AMGMATCH
+void c_matchLambdaOpt(int n, int nnz, int *s, int *t, double *edgeWght, double lambda, int *mateNode);
+void c_matchLambdaTwoThirdeps(int n, int nnz, int *s, int *t, double *edgeWght, double lambda, int *mateNode);
+#endif
 
 #endif

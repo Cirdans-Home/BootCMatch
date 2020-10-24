@@ -50,6 +50,9 @@ if(USE_AMGMatch)
 		message(STATUS "Found LEMON Library.")
 	endif(LEMON_FOUND)
 	add_subdirectory(AUXIL/AMGMatch)
+	# Set Variables for compilation
+	set(AUXIL_FLAGS HAVE_AMGMATCH)
+	set(AUXIL_LIBS matchbox amgmatch)
 endif(USE_AMGMatch)
 
 #-----------------------------------------------------------------------------#

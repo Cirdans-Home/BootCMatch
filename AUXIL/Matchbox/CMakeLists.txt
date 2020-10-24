@@ -16,45 +16,46 @@ add_library(matchbox
 
 # We need this directory, and users of our library will need it too
 target_include_directories(matchbox
-        PUBLIC "${PROJECT_SOURCE_DIR}/AUXIL/include"
-               "${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox" )
+        PUBLIC "${CMAKE_SOURCE_DIR}/AUXIL/include"
+               "${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox" )
 
 # All users of this library will need at least C++11
 target_compile_features(matchbox PUBLIC cxx_std_11 )
-target_compile_options(matchbox PUBLIC -ansi -DSTATS)
+target_compile_options(matchbox PUBLIC -DSTATS)
+target_compile_options(matchbox PRIVATE -ansi)
 
 # Set the PUBLIC_HEADER to install
 set_property(TARGET matchbox PROPERTY
-            PUBLIC_HEADER ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/AdjGraphEngine.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/BptEdgCovEngine.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/BptVtxCovEngine.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/Graph.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmAndValIdxdQue.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/Timer.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/VecItmQue.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/BhpItmAndValIdxdMaxPriQue.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/BptGraph.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/ConvertEngine.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/gtest.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmIdxdQue.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/MatchingEngine.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/Types.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/VecItmStk.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/BhpItmAndValIdxdMinPriQue.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/BptIndSetEngine.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/EdgeSet.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmAndValIdxdMaxPriQue.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmQue.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/MatchingEngine.h.gch
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/Utility.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/VertexSet.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/BptCanonicalEngine.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/BptMatchingEngine.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/Functional.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmAndValIdxdMinPriQue.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmStk.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/Stats.h
-                    ${PROJECT_SOURCE_DIR}/AUXIL/include/Matchbox/Utility.h.gch)
+            PUBLIC_HEADER ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/AdjGraphEngine.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/BptEdgCovEngine.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/BptVtxCovEngine.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/Graph.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmAndValIdxdQue.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/Timer.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/VecItmQue.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/BhpItmAndValIdxdMaxPriQue.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/BptGraph.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/ConvertEngine.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/gtest.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmIdxdQue.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/MatchingEngine.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/Types.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/VecItmStk.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/BhpItmAndValIdxdMinPriQue.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/BptIndSetEngine.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/EdgeSet.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmAndValIdxdMaxPriQue.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmQue.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/MatchingEngine.h.gch
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/Utility.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/VertexSet.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/BptCanonicalEngine.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/BptMatchingEngine.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/Functional.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmAndValIdxdMinPriQue.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/LstItmStk.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/Stats.h
+                    ${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox/Utility.h.gch)
 
 install(TARGETS matchbox
         LIBRARY

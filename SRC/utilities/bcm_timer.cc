@@ -1,10 +1,10 @@
-/* 
-                BootCMatch 
+/*
+                BootCMatch
      Bootstrap AMG based on Compatible weighted Matching, version 0.9
     (C) Copyright 2017
                        Pasqua D'Ambra         IAC-CNR, IT
                        Panayot S. Vassilevki Portland State University, Portland USA
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
   are met:
@@ -16,7 +16,7 @@
     3. The name of the BootCMatch group or the names of its contributors may
        not be used to endorse or promote products derived from this
        software without specific written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
   TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -28,8 +28,11 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
- 
+
 */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <time.h>
 #include <unistd.h>
 #include <sys/times.h>
@@ -54,7 +57,7 @@ double time_getWallclockSeconds(void)
   }
   temp = ((double)tt.tv_sec) + ((double)tt.tv_usec)*1.0e-6;
   return(temp);
-#endif   
+#endif
 }
 
 double time_getCPUSeconds(void)
@@ -72,3 +75,6 @@ double time_get_cpu_seconds_(void)
 {
    return(time_getCPUSeconds());
 }
+#ifdef __cplusplus
+}
+#endif
