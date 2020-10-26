@@ -73,6 +73,7 @@ if (UNIX)
     endif (osx_ppc)
     ## generic locations (Fink installation)
     list (APPEND lib_locations
+      /sw/lib/gcc5.5/lib
       /sw/lib/gcc4.4/lib
       /sw/lib/gcc4.3/lib
       /sw/lib/gcc4.2/lib
@@ -86,10 +87,6 @@ if (UNIX)
       /usr/lib/gcc/i486-linux-gnu/4.1
       /usr/lib/gcc/i386-redhat-linux/3.4.6
       /usr/lib64/gcc/x86_64-suse-linux/4.3
-      /usr/lib/gcc/x86_64-redhat-linux/3.4.3/32
-      /usr/lib/gcc/x86_64-redhat-linux/3.4.3
-      /usr/lib/gcc/x86_64-redhat-linux/4.1.1
-      /usr/lib/gcc/x86_64-redhat-linux/4.1.2
       /usr/lib/gcc/x86_64-linux-gnu/4.2
       /usr/lib/gcc/x86_64-linux-gnu/7
       /usr/lib/gcc/x86_64-linux-gnu/7.5.0
@@ -126,6 +123,7 @@ find_library (GFORTRAN_LIBRARY gfortran
   PATHS ${lib_locations}
   /usr/local/gfortran/lib
   /opt/local/lib/gcc43
+  /opt/local/lib/gcc55
   /usr/local/gfortran/lib/x86_64
   /usr/local/lib64
   $ENV{LD_LIBRARY_PATH}
