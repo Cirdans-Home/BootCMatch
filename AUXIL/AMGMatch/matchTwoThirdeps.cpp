@@ -38,13 +38,16 @@ void matchLambdaTwoThirdeps(Size n, Size nnz, vector<Size> &s, vector<Size> &t, 
     }
 
     //Matchbox matchingEngine for the two-third epsilon matching algorithm
-    MatchingEngine matchingEngine; 
-    
+    MatchingEngine matchingEngine;
+
 
     //The matching statistics
     Size card;
     Val wght;
-    Size numedgs; 
+    Size numedgs;
+
+    if(mateNode.empty())
+        mateNode.resize(n);
 
     double startTime = omp_get_wtime();
     //The number of phases
@@ -57,7 +60,7 @@ void matchLambdaTwoThirdeps(Size n, Size nnz, vector<Size> &s, vector<Size> &t, 
     double endTime = omp_get_wtime();
     bool valid = matchingEngine.CheckMatching(g, mateNode, card);
     assert(valid==true);
-    
+
     //Iterate through the nodes and replace the mate of unmatched nodes by -1
     for(int i=0;i<n;i++)
     {

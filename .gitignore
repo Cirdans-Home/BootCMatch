@@ -11,10 +11,6 @@ cbind/*.h
 config.log
 config.status
 
-# generated folder
-include/
-autom4te.cache
-
 # the executable from tests
 runs
 Test/RUNS
