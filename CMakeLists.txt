@@ -37,7 +37,8 @@ if(INSTALL_SPRAL)
 	endif(SPRAL_FOUND)
 endif(INSTALL_SPRAL)
 
-find_package(GFortran REQUIRED)
+# find_package(GFortran REQUIRED)
+set(GFORTRAN_LIBRARY gfortran)
 
 #-----------------------------------------------------------------------------#
 # We look for the auxiliary libraries
