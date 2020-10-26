@@ -213,7 +213,7 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
   int *ia, *jcp;
   double *val;
 
-#if defined(HAVE_HSL) || defined(HAVE_SPRAL)
+#if defined(HAVE_HSL) || defined(HAVE_SPRAL) || defined(HAVE_AMGMATCH)
   int nrows_L;
   double *rscaling, *cscaling;
 #endif

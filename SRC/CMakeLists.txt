@@ -29,7 +29,7 @@ target_link_libraries( BCM PUBLIC -lm ${BLAS_LIBRARIES}
 																			${AUXIL_LIBS}
 																			${GFORTRAN_LIBRARY})
 
-target_link_directories( BCM PUBLIC ${SPRAL_LIBDIR} ${HSL_LIBDIR})
+target_link_directories( BCM PUBLIC ${SPRAL_LIBDIR} ${HSL_LIBDIR} ${LEMON_LIBDIR})
 
 target_compile_definitions( BCM PUBLIC ${HSL_FLAGS}
 																			 ${SPRAL_FLAGS}
