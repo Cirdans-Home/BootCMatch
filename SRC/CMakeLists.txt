@@ -27,7 +27,7 @@ target_link_libraries( BCM PUBLIC -lm ${BLAS_LIBRARIES}
 																			${HSL_LIBS}
 																			${SUPERLU_LIBRARIES}
 																			${AUXIL_LIBS}
-																			-lgfortran)
+																			${GFORTRAN_LIBRARY})
 
 target_link_directories( BCM PUBLIC ${SPRAL_LIBDIR} ${HSL_LIBDIR})
 

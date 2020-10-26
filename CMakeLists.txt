@@ -31,6 +31,8 @@ if(SPRAL_FOUND)
 	message(STATUS "Found SPRAL Library.")
 endif(SPRAL_FOUND)
 
+find_package(GFortran REQUIRED)
+
 #-----------------------------------------------------------------------------#
 # We look for the auxiliary libraries
 #-----------------------------------------------------------------------------#
