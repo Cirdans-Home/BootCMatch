@@ -31,5 +31,6 @@ void clearStat(Amgmatch_stat &);
 void trnslWght(vector<Size> &, vector<Size> &, vector<Val> &, Val );
 void readMtx(std::string , Size &n,  Size &nnz, Val *&, Size *&, Size *&, Val threshold);
 void readMtxEdgeList(std::string , Size &,Size &, vector<Size> &, vector<Size> &, vector<Val> &, Val );
-int writeMatching(std::string , Size , vector<Size> &);
+int writeMatching(std::string , Size , vector<Size> &); // DEBUG FABIO D.
+int writeVec(std::string , Size , vector<double> &);
 void matchingStat(Size , Size , Amgmatch_stat &);

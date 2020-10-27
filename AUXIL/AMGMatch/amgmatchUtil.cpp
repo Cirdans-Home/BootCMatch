@@ -90,7 +90,7 @@ void readMtx(std::string fileName, Size &n,  Size &nnz, Val *&nzVal, Size *&colI
         if(fabs(weight)>threshold)
         {
             if(weight < 0)
-               weight = (-1)*weight; 
+               weight = (-1)*weight;
 
             adjList[u].push_back(v);
             adjWeight[u].push_back(weight);
@@ -123,7 +123,7 @@ void readMtx(std::string fileName, Size &n,  Size &nnz, Val *&nzVal, Size *&colI
     }
 
     //delete the vectors
-    for(Size i=0;i<nrow;i++) 
+    for(Size i=0;i<nrow;i++)
     {
         adjList[i].clear();
         std::vector<Size>().swap(adjList[i]);
@@ -131,7 +131,7 @@ void readMtx(std::string fileName, Size &n,  Size &nnz, Val *&nzVal, Size *&colI
         adjWeight[i].clear();
         std::vector<Val>().swap(adjWeight[i]);
 
-    } 
+    }
 
 }
 
@@ -183,7 +183,7 @@ void readMtxEdgeList(std::string fileName, Size &n,Size &nnz, vector<Size> &s, v
         if(u<v && fabs(weight)>threshold)
         {
             if(weight < 0)
-               weight = (-1)*weight; 
+               weight = (-1)*weight;
             assert(weight > 0);
             s.push_back(u);
             t.push_back(v);
@@ -202,9 +202,9 @@ void readMtxEdgeList(std::string fileName, Size &n,Size &nnz, vector<Size> &s, v
 
 int writeMatching(std::string outputfile, Size n, vector<Size> &mateNode)
 {
-    std::ofstream fileout; 
+    std::ofstream fileout;
     fileout.open(outputfile.c_str());
-    
+
     if(fileout.is_open())
     {
         fileout<<n<<endl;
@@ -212,7 +212,28 @@ int writeMatching(std::string outputfile, Size n, vector<Size> &mateNode)
         {
             fileout<<i<<" "<<mateNode[i]<<endl;
         }
-        return 0; 
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+}
+
+// DEBUG FABIO D.
+int writeVec(std::string outputfile, Size n, vector<double> &mateNode)
+{
+    std::ofstream fileout;
+    fileout.open(outputfile.c_str());
+
+    if(fileout.is_open())
+    {
+        fileout<<n<<endl;
+        for(int i=0;i<n;i++)
+        {
+            fileout<<i<<" "<<mateNode[i]<<endl;
+        }
+        return 0;
     }
     else
     {

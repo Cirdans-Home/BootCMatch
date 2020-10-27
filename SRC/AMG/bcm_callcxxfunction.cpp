@@ -5,12 +5,18 @@
 #include <fstream>
 #include "AMGMatch/amgmatch.h"
 
-extern "C" void c_matchLambdaOpt(int n, int nnz, int *s, int *t, double *edgeWght, double lambda, int *mateNode){
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+void c_matchLambdaOpt(int n, int nnz, int *s, int *t, double *edgeWght, double lambda, int *mateNode){
 
   vector<int> vs,vt;
   vector<double> vedgeWght;
   vector<int> vmateNode;
   Amgmatch_stat pstat;
+
+  clearStat(pstat);
 
   // We need some C++ to copy the input Array into a C++ Vector
   vector<int> vs2(&s[0], &s[nnz]);
@@ -26,12 +32,14 @@ extern "C" void c_matchLambdaOpt(int n, int nnz, int *s, int *t, double *edgeWgh
   matchingStat(n,nnz,pstat);
 }
 
-extern "C" void c_matchLambdaTwoThirdeps(int n, int nnz, int *s, int *t, double *edgeWght, double lambda, int *mateNode){
+void c_matchLambdaTwoThirdeps(int n, int nnz, int *s, int *t, double *edgeWght, double lambda, int *mateNode){
 
   vector<int> vs,vt;
   vector<double> vedgeWght;
   vector<int> vmateNode;
   Amgmatch_stat pstat;
+
+  clearStat(pstat);
 
   // We need some C++ to copy the input Array into a C++ Vector
   vector<int> vs2(&s[0], &s[nnz]);
@@ -41,7 +49,10 @@ extern "C" void c_matchLambdaTwoThirdeps(int n, int nnz, int *s, int *t, double 
   vector<double> vedgeWght2(&edgeWght[0],&edgeWght[nnz]);
   vedgeWght.insert(vedgeWght.end(), vedgeWght2.begin(), vedgeWght2.end());
 
-  clearStat(pstat);
+  // DEBUG FABIO D.
+  writeMatching("vs.txt", n, vs);
+  writeMatching("vt.txt", n, vt);
+  writeVec("vedgeWght.txt", n, vedgeWght);
 
   fprintf(stderr, "2/3-ε matrix size %d x %d, nnz = %d, λ = %1.2f \n",n,n,nnz,lambda);
   matchLambdaTwoThirdeps(n,nnz,vs,vt,vedgeWght,lambda,vmateNode,pstat);
@@ -51,5 +62,9 @@ extern "C" void c_matchLambdaTwoThirdeps(int n, int nnz, int *s, int *t, double 
   matchingStat(n,nnz,pstat);
 
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

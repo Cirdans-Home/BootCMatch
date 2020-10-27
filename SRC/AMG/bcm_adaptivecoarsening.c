@@ -351,6 +351,8 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 	case MATCH_LAMBDA23:
 		fprintf(stderr, "Calling 2/3-ε Lambda Weighted Matching.\n");
 
+		char fileout[100];
+
 		bcm_CSRMatrixTranspose(AH, &AHT, 1);
 		AH_full=bcm_CSRMatrixAdd(AH,AHT);
 		nzeros = bcm_CSRMatrixNumNonzeros(AH_full);
@@ -366,6 +368,10 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 		bcm_CSRMatrixToCOO( AH_full , s, t, edgeWght);
 
 		lambda = 0.5; // This needs to be passed as input in the structure, first we check if the code works
+
+		// DEBUG FABIO D.
+		sprintf(fileout,"ahfull_%dx%d.mtx",nrows_L,nrows_L);
+		bcm_CSRMatrixPrintMM(AH_full,fileout);
 
 		c_matchLambdaTwoThirdeps(nrows_L,nzeros,s,t,edgeWght,lambda,p);
 
