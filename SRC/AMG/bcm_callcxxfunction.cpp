@@ -49,14 +49,7 @@ void c_matchLambdaTwoThirdeps(int n, int nnz, int *s, int *t, double *edgeWght, 
   vector<double> vedgeWght2(&edgeWght[0],&edgeWght[nnz]);
   vedgeWght.insert(vedgeWght.end(), vedgeWght2.begin(), vedgeWght2.end());
 
-  // DEBUG FABIO D.
-  writeMatching("vs.txt", n, vs);
-  writeMatching("vt.txt", n, vt);
-  writeVec("vedgeWght.txt", n, vedgeWght);
-
-  fprintf(stderr, "2/3-ε matrix size %d x %d, nnz = %d, λ = %1.2f \n",n,n,nnz,lambda);
   matchLambdaTwoThirdeps(n,nnz,vs,vt,vedgeWght,lambda,vmateNode,pstat);
-  fprintf(stderr, "2/3-ε Matching Complete\n");
   std::copy(vmateNode.begin(), vmateNode.end(),mateNode);
 
   matchingStat(n,nnz,pstat);

@@ -351,12 +351,8 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 	case MATCH_LAMBDA23:
 		fprintf(stderr, "Calling 2/3-ε Lambda Weighted Matching.\n");
 
-		char fileout[100];
-
-		bcm_CSRMatrixTranspose(AH, &AHT, 1);
-		AH_full=bcm_CSRMatrixAdd(AH,AHT);
-		nzeros = bcm_CSRMatrixNumNonzeros(AH_full);
-		nrows_L = bcm_CSRMatrixNumRows(AH_full);
+		nzeros = bcm_CSRMatrixNumNonzeros(AH);
+		nrows_L = bcm_CSRMatrixNumRows(AH);
 
 		/* The matching algorithm needs for the matrix to be in COO format, while
 		 * we have in CSR format... we need to convert it: */
@@ -365,19 +361,13 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 		t = (int *) malloc(nzeros*sizeof(int));
 		edgeWght = (double *) malloc(nzeros*sizeof(double));
 
-		bcm_CSRMatrixToCOO( AH_full , s, t, edgeWght);
+		bcm_CSRMatrixToCOO( AH , s, t, edgeWght);
 
 		lambda = 0.5; // This needs to be passed as input in the structure, first we check if the code works
-
-		// DEBUG FABIO D.
-		sprintf(fileout,"ahfull_%dx%d.mtx",nrows_L,nrows_L);
-		bcm_CSRMatrixPrintMM(AH_full,fileout);
 
 		c_matchLambdaTwoThirdeps(nrows_L,nzeros,s,t,edgeWght,lambda,p);
 
 		/* Free the memory */
-		bcm_CSRMatrixDestroy(AHT);
-		bcm_CSRMatrixDestroy(AH_full);
 		free(s);
 		free(t);
 		free(edgeWght);

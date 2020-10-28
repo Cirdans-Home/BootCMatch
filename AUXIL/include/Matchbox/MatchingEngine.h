@@ -2006,9 +2006,6 @@ namespace Matchbox {
                     Mwght[tempU1]=0;
                     Mwght[tempU2]=0;
                 }
-                // DEBUG FABIO D.
-                std::cout << "u1 = " << u1 ;
-                std::cout << " u2 = " << u2 << std::endl;
                 mateArr[u1]=u2;
                 mateArr[u2]=u1;
                 Mwght[u1]=tempMwght[u1];
