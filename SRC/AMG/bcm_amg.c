@@ -57,6 +57,7 @@ bcm_AMGInitialize()
     *     relax_type/coarse_solver = 2 ->  1 sweep of backward Gauss-Seidel
     *     relax_type/coarse_solver = 3 ->  1 sweep of symm. Gauss-Seidel
     *     relax_type/coarse_solver = 9 -> Direct Solve */
+   double   lambda;
 
    /* CR params */
    int      CRrelax_type; /* to choose relaxation scheme for Compatible Relaxation */
@@ -78,6 +79,7 @@ bcm_AMGInitialize()
      maxcoarsesize=100;
      sweepnumber=0;
      agg_interp_type=0;
+     lambda=0.0;
      agg_match_type=0;
      coarse_solver=9;
 
@@ -99,6 +101,7 @@ bcm_AMGInitialize()
    bcm_AMGBuildSetAggInterpType(amg_data, agg_interp_type);
    bcm_AMGBuildSetAggMatchType(amg_data, agg_match_type);
    bcm_AMGBuildSetCoarseSolver(amg_data, coarse_solver);
+   bcm_AMGBuildSetLambda(amg_data, lambda);
 
    bcm_AMGBuildSetCRRelaxWeight(amg_data, CRrelax_weight);
    bcm_AMGBuildSetCRIterations(amg_data, CRit);
@@ -244,6 +247,16 @@ bcm_AMGBuildDataDestroy(void *data)
    {
      free(amg_data);
    }
+   return ierr;
+}
+
+int
+bcm_AMGBuildSetLambda(void *data, double lambda){
+   int ierr=0;
+   bcm_AMGBuildData  *amg_data = data;
+
+   bcm_AMGBuildDataLambda(amg_data) = lambda;
+
    return ierr;
 }
 

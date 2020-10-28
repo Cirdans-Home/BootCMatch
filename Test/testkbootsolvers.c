@@ -1,10 +1,10 @@
-/* 
-                BootCMatch 
+/*
+                BootCMatch
      Bootstrap AMG based on Compatible weighted Matching version 0.9
     (C) Copyright 2017
                        Pasqua D'Ambra    IAC-CNR, IT
                        Panayot S. Vassilevski Portland State University, OR USA
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
   are met:
@@ -16,7 +16,7 @@
     3. The name of the BootCMatch group or the names of its contributors may
        not be used to endorse or promote products derived from this
        software without specific written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
   TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -28,7 +28,7 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
- 
+
 */
 
 #include "bcm.h"
@@ -43,6 +43,7 @@ typedef struct {
   int max_hrc;
   double conv_ratio;
   int matchtype;
+	double lambda;
   int aggrsweeps;
   int aggrtype;
   int max_levels;
@@ -81,6 +82,7 @@ int get_inp_data(FILE *fp, parms_t *inparms)
     inparms->max_hrc           = int_get_fp(fp);
     inparms->conv_ratio        = double_get_fp(fp);
     inparms->matchtype         = int_get_fp(fp);
+		inparms->lambda            = double_get_fp(fp);
     inparms->aggrsweeps        = int_get_fp(fp);
     inparms->aggrtype          = int_get_fp(fp);
     inparms->max_levels        = int_get_fp(fp);
@@ -88,9 +90,9 @@ int get_inp_data(FILE *fp, parms_t *inparms)
     inparms->coarse_solver     = int_get_fp(fp);
     inparms->relax_type        = int_get_fp(fp);
     inparms->prerelax_sweeps   = int_get_fp(fp);
-    inparms->postrelax_sweeps  = int_get_fp(fp);    
-    inparms->itnlim            = int_get_fp(fp);    
-    inparms->rtol              = double_get_fp(fp);    
+    inparms->postrelax_sweeps  = int_get_fp(fp);
+    inparms->itnlim            = int_get_fp(fp);
+    inparms->rtol              = double_get_fp(fp);
   } else {
     return(-1);
   }
@@ -160,7 +162,7 @@ int  main(int argc, char *argv[])
 
    /* read rhs vector from file */
    if (inparms.rhsfile != NULL) {
-     if (inparms.matrixformat==1) rhs=bcm_VectorMMRead(inparms.rhsfile); 
+     if (inparms.matrixformat==1) rhs=bcm_VectorMMRead(inparms.rhsfile);
      else rhs=bcm_VectorRead(inparms.rhsfile);
      size_rhs= bcm_VectorSize(rhs);
      printf("size_rhs: %d\n",size_rhs);
@@ -181,7 +183,7 @@ int  main(int argc, char *argv[])
      printf("size_soltrue: %d\n",size_soltrue);
    }
 
-   assert(num_rows == size_rhs); 
+   assert(num_rows == size_rhs);
 
    /* initialize data structure for AMG building. See the setup
       routines for changing default values */
@@ -203,6 +205,7 @@ int  main(int argc, char *argv[])
    bcm_BootAMGBuildSetMaxHrc(bootamg_data, inparms.max_hrc);
    bcm_BootAMGBuildSetDesiredRatio(bootamg_data, inparms.conv_ratio);
    bcm_AMGBuildSetAggMatchType(amg_data, inparms.matchtype);
+	 bcm_AMGBuildSetLambda(amg_data, inparms.lambda);
    bcm_AMGBuildSetSweepNumber(amg_data, inparms.aggrsweeps);
    bcm_AMGBuildSetAggInterpType(amg_data, inparms.aggrtype);
    bcm_AMGBuildSetMaxLevels(amg_data, inparms.max_levels);
@@ -217,6 +220,9 @@ int  main(int argc, char *argv[])
    printf("Max number of components: %d\n",bcm_BootAMGBuildDataMaxHrc(bootamg_data));
    printf("Desired Conv. Ratio: %e\n",bcm_BootAMGBuildDataDesRatio(bootamg_data));
    printf("Matching Type: %d\n",bcm_AMGBuildDataAggMatchType(amg_data));
+	 if( bcm_AMGBuildDataAggMatchType(amg_data) == 3 || bcm_AMGBuildDataAggMatchType(amg_data) == 4){
+	 	printf("Parameter λ for matching: %f\n",bcm_AMGBuildDataLambda(amg_data));
+ 	 }
    printf("Aggregation sweeps: %d\n",bcm_AMGBuildDataSweepNumber(amg_data));
    printf("Aggregation Type: %d\n",bcm_AMGBuildDataAggInterpType(amg_data));
    printf("max_levels: %d\n",bcm_AMGBuildDataMaxLevels(amg_data));
@@ -246,7 +252,7 @@ int  main(int argc, char *argv[])
    /* initialize num_grid_sweeps parameter w.r.t. the number of levels
       and the chosen cycle.
       In the final release we have to manage this in a setup routine after hierarchy building */
-   
+
    num_grid_sweeps = (int *) calloc(inparms.max_levels-1, sizeof(int));
    for(i=0; i<inparms.max_levels-1; i++) num_grid_sweeps[i]=1;
    switch(inparms.cycle_type)  {
@@ -275,7 +281,7 @@ int  main(int argc, char *argv[])
    int w_size=bcm_VectorSize(w);
    printf("wsize: %d\n",w_size);
    /*bcm_VectorSetRandomValues(w,1.0);*/
-   bcm_VectorSetConstantValues(w,1.0); 
+   bcm_VectorSetConstantValues(w,1.0);
 
    bcm_AMGBuildDataSmoothVector(amg_data)= w;
 
@@ -308,18 +314,18 @@ int  main(int argc, char *argv[])
      avgwcmpx=avgwcmpx+ bcm_AMGHierarchyOpCmplxW(Harray[k]);
      avgnumlev=avgnumlev+ bcm_AMGHierarchyNumLevels(Harray[k]);
    }
-   printf("Wall Clock Time for Building:  %e\n", time2); 
+   printf("Wall Clock Time for Building:  %e\n", time2);
    avgcmpx=avgcmpx/bcm_BootAMGNHrc(boot_amg);
    avgwcmpx=avgwcmpx/bcm_BootAMGNHrc(boot_amg);
    avgnumlev=avgnumlev/bcm_BootAMGNHrc(boot_amg);
-   printf("AVG cmpx for V-cycle %e\n", avgcmpx); 
-   printf("AVG cmpx for W-cycle %e\n", avgwcmpx); 
-   printf("AVG numlev  %e\n", avgnumlev); 
-   
+   printf("AVG cmpx for V-cycle %e\n", avgcmpx);
+   printf("AVG cmpx for W-cycle %e\n", avgwcmpx);
+   printf("AVG numlev  %e\n", avgnumlev);
+
    /* generate initial vector */
    Sol=bcm_VectorCreate(num_rows);
    bcm_VectorInitialize(Sol);
-   
+
    int precon=1, itn, istop;
    double timetot;
 

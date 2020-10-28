@@ -105,6 +105,7 @@ typedef struct
     *     relax_type/coarse_solver = 1 ->  1 sweep of Gauss-Seidel
     *     relax_type/coarse_solver = 2 ->  1 sweep of symm. Gauss-Seidel
     *     relax_type/coarse_solver = 9 -> Direct Solve */
+	 double		lambda; /* λ parameter for agg_match_type 3 and 4 */
 
    /* CR params */
    int      CRrelax_type; /* to choose relaxation scheme for Compatible Relaxation */
@@ -125,6 +126,7 @@ typedef struct
 
 #define bcm_AMGBuildDataMaxLevels(amg_data) ((amg_data)->maxlevels)
 #define bcm_AMGBuildDataAggInterpType(amg_data) ((amg_data)->agg_interp_type)
+#define bcm_AMGBuildDataLambda(amg_data) ((amg_data)->lambda)
 #define bcm_AMGBuildDataAggMatchType(amg_data) ((amg_data)->agg_match_type)
 #define bcm_AMGBuildDataMaxCoarseSize(amg_data) ((amg_data)->maxcoarsesize)
 #define bcm_AMGBuildDataSweepNumber(amg_data) ((amg_data)->sweepnumber)
@@ -179,6 +181,7 @@ int bcm_AMGBuildSetCRRelaxType(void *data, int crrelax_type);
 int bcm_AMGBuildSetCRRelaxWeight(void *data, double crrelax_weight);
 int bcm_AMGBuildSetCRIterations(void *data, int criterations);
 int bcm_AMGBuildSetCRRatio(void *data, double crratio);
+int bcm_AMGBuildSetLambda(void * data, double lambda);
 int bcm_AMGBuildDataDestroy(void *data);
 bcm_AMGHierarchy *bcm_AMGHierarchyCreate(int maxlevels);
 int bcm_AMGHierarchyInitialize(bcm_AMGHierarchy *amg_hierarchy);
@@ -202,10 +205,10 @@ int bcm_trymatch(int rno, int cno, bcm_CSRMatrix *W, int *jrowindex,
 
 /* bcm_adaptivecoarsening.c */
 bcm_CSRMatrix * bcm_CSRMatchingAgg(bcm_CSRMatrix *A, bcm_Vector **w,
-				   bcm_CSRMatrix **P, int match_type, int num_sweeps,
+				   bcm_CSRMatrix **P, int match_type, double lambda, int num_sweeps,
 				   int max_sizecoarse, int max_levels, int *ftcoarse,
 				   int cr_it, int cr_relax_type, double cr_relax_weight);
-int bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int match_type);
+int bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int match_type, double lambda);
 bcm_AMGHierarchy * bcm_AdaptiveCoarsening(bcm_AMGBuildData *amg_data);
 
 #ifdef HAVE_AMGMATCH

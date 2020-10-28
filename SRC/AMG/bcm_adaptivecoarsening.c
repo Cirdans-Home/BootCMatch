@@ -60,7 +60,7 @@
 #define MATCH_LAMBDA23 	4
 
 bcm_CSRMatrix * bcm_CSRMatchingAgg(bcm_CSRMatrix *A, bcm_Vector **w,
-				   bcm_CSRMatrix **P, int match_type, int num_sweeps,
+				   bcm_CSRMatrix **P, int match_type, double lambda, int num_sweeps,
 				   int max_sizecoarse, int max_levels, int *ftcoarse,
 				   int cr_it, int cr_relax_type, double cr_relax_weight)
 {
@@ -114,7 +114,7 @@ bcm_CSRMatrix * bcm_CSRMatchingAgg(bcm_CSRMatrix *A, bcm_Vector **w,
   for(i=1; i<=num_sweeps; i++){
     /* build prolongator by pairwise aggregation based on compatible weighted matching */
     timematching=time_getWallclockSeconds();
-    ierr=bcm_CSRMatchingPairAgg(A_tmp[i-1],w_temp,&Pagg,match_type);
+    ierr=bcm_CSRMatchingPairAgg(A_tmp[i-1],w_temp,&Pagg,match_type,lambda);
     timematching=time_getWallclockSeconds()-timematching;
     timematchingtot=timematchingtot+timematching;
     fprintf(stderr,"From MatchingPairAgg: %d %p\n",ierr,Pagg);
@@ -198,7 +198,7 @@ bcm_CSRMatrix * bcm_CSRMatchingAgg(bcm_CSRMatrix *A, bcm_Vector **w,
 }
 
 int
-bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int match_type)
+bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int match_type, double lambda)
 
 {
   int sizew = bcm_VectorSize(w);
@@ -227,7 +227,7 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 #endif
 #if defined(HAVE_AMGMATCH)
 	int *s,*t;
-	double *edgeWght,lambda;
+	double *edgeWght; // lambda
 #endif
   int *p;
   int nrows_A = bcm_CSRMatrixNumRows(A);
@@ -334,8 +334,6 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 
 		bcm_CSRMatrixToCOO( AH , s, t, edgeWght);
 
-		lambda = 0.5; // This needs to be passed as input in the structure, first we check if the code works
-
 		c_matchLambdaOpt(nrows_L,nzeros,s,t,edgeWght,lambda,p);
 
 		/* Free the memory */
@@ -358,8 +356,6 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 		edgeWght = (double *) malloc(nzeros*sizeof(double));
 
 		bcm_CSRMatrixToCOO( AH , s, t, edgeWght);
-
-		lambda = 0.5; // This needs to be passed as input in the structure, first we check if the code works
 
 		c_matchLambdaTwoThirdeps(nrows_L,nzeros,s,t,edgeWght,lambda,p);
 
@@ -478,7 +474,7 @@ bcm_AMGHierarchy * bcm_AdaptiveCoarsening(bcm_AMGBuildData *amg_data)
   double wcmplxfinal, wcmplxsmoothed;
   bcm_Vector *rhs;
   int cr_relax_type, cr_it,  coarse_solver;
-  double cr_relax_weight;
+  double cr_relax_weight, lambda;
   int i, lev, sizecoarse, max_levels, max_sizecoarse, j, k;
   double dlamch_(char *cmach);
   double  normw, normold, normnew, ratioAc;
@@ -505,6 +501,7 @@ bcm_AMGHierarchy * bcm_AdaptiveCoarsening(bcm_AMGBuildData *amg_data)
   max_levels      = bcm_AMGBuildDataMaxLevels(amg_data);
   max_sizecoarse  = bcm_AMGBuildDataMaxCoarseSize(amg_data);
   coarse_solver   = bcm_AMGBuildDataCoarseSolver(amg_data);
+	lambda          = bcm_AMGBuildDataLambda(amg_data);
 
   /* initialize rhs vector for relaxations on homegeneous systems */
   rhs=bcm_VectorCreate(nsize_w);
@@ -596,7 +593,7 @@ bcm_AMGHierarchy * bcm_AdaptiveCoarsening(bcm_AMGBuildData *amg_data)
   } */
 /* end of truncation process */
 
-      A_array[j]=bcm_CSRMatchingAgg(A_array[j-1],&w_temp,&P,match_type,
+      A_array[j]=bcm_CSRMatchingAgg(A_array[j-1],&w_temp,&P,match_type, lambda,
 				    num_sweeps, max_sizecoarse, max_levels, &ftcoarse,
 				    cr_it, cr_relax_type, cr_relax_weight);
 
