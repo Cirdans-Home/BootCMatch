@@ -1,0 +1,7 @@
+name = "bcmJulia"
+uuid = "0a8b6665-40b3-4e33-ac6d-c9072f79871b"
+authors = ["Fabio Durastante <f.durastante@na.iac.cnr.it>"]
+version = "0.1.0"
+
+[deps]
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
