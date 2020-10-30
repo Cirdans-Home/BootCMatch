@@ -64,6 +64,11 @@ if(USE_AMGMatch)
 endif(USE_AMGMatch)
 
 #-----------------------------------------------------------------------------#
+# Do you need the dynamic library?
+#-----------------------------------------------------------------------------#
+option(BUILD_SHARED_LIBS "Put ON to build the Dynamic version of the library" OFF)
+
+#-----------------------------------------------------------------------------#
 # Start The compilation of the Library
 #-----------------------------------------------------------------------------#
 add_subdirectory(SRC)
