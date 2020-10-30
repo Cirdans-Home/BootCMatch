@@ -1,5 +1,5 @@
 # Make an automatic library - will be static or dynamic based on user setting
-add_library(amgmatch
+add_library(amgmatch STATIC
     matchTwoThirdeps.cpp
     matchOpt.cpp
     amgmatchUtil.cpp
@@ -36,3 +36,32 @@ install(TARGETS amgmatch
 
 set_property(TARGET matchbox PROPERTY
                 PUBLIC_HEADER ${PROJECT_SOURCE_DIR}/AUXIL/include/AMGMatch/amgmatch.h)
+
+if(BUILD_SHARED_LIBS)
+add_library(amgmatchshared SHARED
+    matchTwoThirdeps.cpp
+    matchOpt.cpp
+    amgmatchUtil.cpp
+    )
+
+target_link_libraries(amgmatchshared PRIVATE matchboxshared ${LEMON_LIBS})
+target_link_directories(amgmatchshared PRIVATE ${LEMON_LIBDIR})
+
+target_include_directories(amgmatchshared PUBLIC
+    "${LEMON_INCDIR}"
+    "${PROJECT_SOURCE_DIR}/include"
+    "${PROJECT_SOURCE_DIR}/include/Matchbox"
+    )
+
+target_compile_options(amgmatchshared PUBLIC -DSTATS -DMKL_ILP64 -m64 -O3 -fPIC -ffast-math)
+
+set_target_properties(amgmatchshared PROPERTIES OUTPUT_NAME amgmatch)
+
+install(TARGETS amgmatchshared
+        LIBRARY
+          DESTINATION lib
+          COMPONENT Libraries
+          NAMELINK_COMPONENT Development
+      )
+
+endif()

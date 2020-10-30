@@ -1,0 +1,33 @@
+from cffi import FFI
+ffibuilder = FFI()
+
+ffibuilder.cdef("""
+    void * bcm_AMGInitialize();
+    int bcm_AMGBuildSetMaxLevels(void *data, int  max_levels);
+    int bcm_AMGBuildSetAggInterpType(void *data, int interp_type);
+    int bcm_AMGBuildSetAggMatchType(void *data, int match_type);
+    int bcm_AMGBuildSetMaxCoarseSize(void  *data, int maxcoarse_size);
+    int bcm_AMGBuildSetSweepNumber(void *data, int sweepnumber);
+    int bcm_AMGBuildSetCoarseSolver(void *data, int coarse_solver);
+    int bcm_AMGBuildSetCRRelaxType(void *data, int crrelax_type);
+    int bcm_AMGBuildSetCRRelaxWeight(void *data, double crrelax_weight);
+    int bcm_AMGBuildSetCRIterations(void *data, int criterations);
+    int bcm_AMGBuildSetCRRatio(void *data, double crratio);
+    int bcm_AMGBuildSetLambda(void * data, double lambda);
+    int bcm_AMGBuildDataDestroy(void *data);
+                """)
+
+# set_source() gives the name of the python extension module to
+# produce, and some C source code as a string.  This C code needs
+# to make the declarated functions, types and globals available,
+# so it is often just the "#include".
+ffibuilder.set_source("_bcmpy",
+"""
+     #include <bcm.h>   // the C header of the library
+""",
+    library_dirs = ['@CMAKE_INSTALL_PREFIX@/lib'],
+    include_dirs = ['@CMAKE_INSTALL_PREFIX@/include'],
+    libraries = ['BCM','amgmatch','matchbox']
+)
+
+ffibuilder.compile(verbose=True)

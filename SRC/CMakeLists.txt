@@ -64,7 +64,7 @@ if(BUILD_SHARED_LIBS)
 																				${SPRAL_LIBS}
 																				${HSL_LIBS}
 																				${SUPERLU_LIBRARIES}
-																				${AUXIL_LIBS}
+																				${AUXIL_LIBS_SHARED}
 																				${GFORTRAN_LIBRARY})
 
 	target_link_directories( BCMshared PUBLIC ${SPRAL_LIBDIR} ${HSL_LIBDIR} ${LEMON_LIBDIR})

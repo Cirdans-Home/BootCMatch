@@ -7,6 +7,7 @@ project(BootCMatch VERSION 0.9
 
 # Directory with CMAKE modules, used to search for libraries
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(CMakeDependentOption)
 
 #-----------------------------------------------------------------------------#
 # We look for required libraries
@@ -61,12 +62,21 @@ if(USE_AMGMatch)
 	# Set Variables for compilation
 	set(AUXIL_FLAGS HAVE_AMGMATCH)
 	set(AUXIL_LIBS matchbox amgmatch)
+	set(AUXIL_LIBS_SHARED matchboxshared amgmatchshared)
 endif(USE_AMGMatch)
 
 #-----------------------------------------------------------------------------#
 # Do you need the dynamic library?
 #-----------------------------------------------------------------------------#
 option(BUILD_SHARED_LIBS "Put ON to build the Dynamic version of the library" OFF)
+
+#-----------------------------------------------------------------------------#
+# Do you need some interface?
+#-----------------------------------------------------------------------------#
+CMAKE_DEPENDENT_OPTION(BUILD_PYTHON_INTERFACE "Put ON to build the Python Interface" ON BUILD_SHARED_LIBS OFF)
+if(BUILD_PYTHON_INTERFACE)
+	add_subdirectory(interfaces)
+endif(BUILD_PYTHON_INTERFACE)
 
 #-----------------------------------------------------------------------------#
 # Start The compilation of the Library

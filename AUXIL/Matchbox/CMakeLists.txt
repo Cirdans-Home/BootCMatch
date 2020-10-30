@@ -1,5 +1,5 @@
 # Make an automatic library - will be static or dynamic based on user setting
-add_library(matchbox
+add_library(matchbox STATIC
     BptGraph.cc
     BptMatchingEngine.cc
     AdjGraphEngine.cc
@@ -66,3 +66,39 @@ install(TARGETS matchbox
           DESTINATION include
           COMPONENT Development
        )
+
+if(BUILD_SHARED_LIBS)
+    add_library(matchboxshared SHARED
+        BptGraph.cc
+        BptMatchingEngine.cc
+        AdjGraphEngine.cc
+        BptCanonicalEngine.cc
+        BptEdgCovEngine.cc
+        BptIndSetEngine.cc
+        BptVtxCovEngine.cc
+        ConvertEngine.cc
+        Graph.cc
+        MatchingEngine.cc
+        Stats.cc
+        Timer.cc
+    )
+
+    # We need this directory, and users of our library will need it too
+    target_include_directories(matchboxshared
+            PUBLIC "${CMAKE_SOURCE_DIR}/AUXIL/include"
+                   "${CMAKE_SOURCE_DIR}/AUXIL/include/Matchbox" )
+
+    # All users of this library will need at least C++11
+    target_compile_features(matchboxshared PUBLIC cxx_std_11 )
+    target_compile_options(matchboxshared PUBLIC -fPIC -DSTATS)
+    target_compile_options(matchboxshared PRIVATE -ansi)
+
+    set_target_properties(matchboxshared PROPERTIES OUTPUT_NAME matchbox)
+
+    install(TARGETS matchboxshared
+            LIBRARY
+              DESTINATION lib
+              COMPONENT Libraries
+              NAMELINK_COMPONENT Development
+           )
+endif(BUILD_SHARED_LIBS)
