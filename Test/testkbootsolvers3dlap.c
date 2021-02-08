@@ -71,6 +71,7 @@ typedef struct {
   int max_hrc;
   double conv_ratio;
   int matchtype;
+	double lambda;
   int aggrsweeps;
   int CR_it;
   int aggrtype;
@@ -94,6 +95,7 @@ int get_inp_data(FILE *fp, parms_t *inparms)
     inparms->max_hrc           = int_get_fp(fp);
     inparms->conv_ratio        = double_get_fp(fp);
     inparms->matchtype         = int_get_fp(fp);
+		inparms->lambda            = double_get_fp(fp);
     inparms->aggrsweeps        = int_get_fp(fp);
     inparms->CR_it             = int_get_fp(fp);
     inparms->aggrtype          = int_get_fp(fp);
@@ -148,6 +150,7 @@ int  main(int argc, char *argv[])
     int nnzval=0;
     int *cols, *rows, xi,yi,zi;
     double *values;
+		double anisotropy=inparms.anisotropy;
     values= (double *) calloc(7*N, sizeof(double));
     cols= (int *) calloc(7*N, sizeof(int));
     rows= (int *) calloc(7*N, sizeof(int));
@@ -158,7 +161,7 @@ int  main(int argc, char *argv[])
             rows[nnzval] = i;
             cols[nnzval] = i-n*n;
 						if (inparms.direction == 3){
-            	values[nnzval] = -inparms.anisotropy;
+            	values[nnzval] = -anisotropy;
 						} else {
 							values[nnzval] = -1.0;
 						}
@@ -169,7 +172,7 @@ int  main(int argc, char *argv[])
             rows[nnzval] = i;
             cols[nnzval] = i-n;
 						if (inparms.direction == 2){
-							values[nnzval] = -inparms.anisotropy;
+							values[nnzval] = -anisotropy;
 						} else {
 							values[nnzval] = -1.0;
 						}
@@ -181,7 +184,7 @@ int  main(int argc, char *argv[])
             rows[nnzval] = i;
             cols[nnzval] = i-1;
 						if (inparms.direction == 1){
-							values[nnzval] = -inparms.anisotropy;
+							values[nnzval] = -anisotropy;
 						} else {
 							values[nnzval] = -1.0;
 						}
@@ -191,7 +194,7 @@ int  main(int argc, char *argv[])
          /* Set the diagonal: position i */
          rows[nnzval] = i;
          cols[nnzval] = i;
-         values[nnzval] = 4.0 + 2*inparms.anisotropy;
+         values[nnzval] = 4.0 + 2*anisotropy;
          nnzval=nnzval+1;
 
          /* The right -1: position i+1 */
@@ -199,7 +202,7 @@ int  main(int argc, char *argv[])
             rows[nnzval] = i;
             cols[nnzval] = i+1;
 						if (inparms.direction == 1){
-							values[nnzval] = -inparms.anisotropy;
+							values[nnzval] = -anisotropy;
 						} else {
 							values[nnzval] = -1.0;
 						}
@@ -212,7 +215,7 @@ int  main(int argc, char *argv[])
             rows[nnzval] = i;
             cols[nnzval] = i+n;
 						if (inparms.direction == 2){
-							values[nnzval] = -inparms.anisotropy;
+							values[nnzval] = -anisotropy;
 						} else {
 							values[nnzval] = -1.0;
 						}
@@ -224,7 +227,7 @@ int  main(int argc, char *argv[])
             rows[nnzval] = i;
             cols[nnzval] = i+n*n;
 						if (inparms.direction == 3){
-							values[nnzval] = -inparms.anisotropy;
+							values[nnzval] = -anisotropy;
 						} else {
 							values[nnzval] = -1.0;
 						}
@@ -317,7 +320,8 @@ int  main(int argc, char *argv[])
    bcm_BootAMGBuildSetMaxHrc(bootamg_data, inparms.max_hrc);
    bcm_BootAMGBuildSetDesiredRatio(bootamg_data, inparms.conv_ratio);
    bcm_AMGBuildSetAggMatchType(amg_data, inparms.matchtype);
-   bcm_AMGBuildSetSweepNumber(amg_data, inparms.aggrsweeps);
+	 bcm_AMGBuildSetLambda(amg_data, inparms.lambda);
+	 bcm_AMGBuildSetSweepNumber(amg_data, inparms.aggrsweeps);
    bcm_AMGBuildSetCRIterations(amg_data, inparms.CR_it);
    bcm_AMGBuildSetAggInterpType(amg_data, inparms.aggrtype);
    bcm_AMGBuildSetMaxLevels(amg_data, inparms.max_levels);
@@ -448,11 +452,11 @@ int  main(int argc, char *argv[])
 
    char *file_out="sol.mtx";
    bcm_VectorPrint(Sol,file_out);
-
+/*
 #ifdef DUMP_HIER
    dump_on_file("BCM-",boot_amg);
 #endif
-
+*/
    free(num_grid_sweeps);
    bcm_AMGApplyDataDestroy(amg_cycle);
    bcm_BootAMGBuildDataDestroy(bootamg_data);

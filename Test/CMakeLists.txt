@@ -1,6 +1,7 @@
 # Compiling the tests
 
-set(testprogram "testbootstrap" "testkbootsolvers" "testsolving")
+set(testprogram "testbootstrap" "testkbootsolvers" "testsolving"
+								"testkbootsolvers3dlap")
 
 foreach(testname IN LISTS testprogram)
 	add_executable(${testname} 		${testname}
@@ -33,6 +34,7 @@ configure_file(
 	"${CMAKE_INSTALL_PREFIX}/samples/Makefile"
 	@ONLY
 )
-install(FILES ioutil.c testbootstrap.c testkbootsolvers.c testsolving.c ioutil.h
+install(FILES ioutil.c testbootstrap.c testkbootsolvers.c
+							testkbootsolvers3dlap.c testsolving.c ioutil.h
 	DESTINATION samples
 	COMPONENT Runtime)
