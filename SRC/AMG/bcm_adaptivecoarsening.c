@@ -228,6 +228,7 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 #if defined(HAVE_AMGMATCH)
 	int *s,*t;
 	double *edgeWght; // lambda
+	double maxval, minval;
 #endif
   int *p;
   int nrows_A = bcm_CSRMatrixNumRows(A);
@@ -332,8 +333,11 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 		t = (int *) malloc(nzeros*sizeof(int));
 		edgeWght = (double *) malloc(nzeros*sizeof(double));
 
+		maxval = bcm_CSRMatrixFindMax(AH);
+		minval = bcm_CSRMatrixFindMin(AH);
 		bcm_CSRMatrixToCOO( AH , s, t, edgeWght);
 
+		fprintf(stdout, "max(A) = %f\nmin(A) = %f\n",maxval,minval);
 		c_matchLambdaOpt(nrows_L,nzeros,s,t,edgeWght,lambda,p);
 
 		/* Free the memory */
@@ -355,8 +359,11 @@ bcm_CSRMatchingPairAgg(bcm_CSRMatrix *A, bcm_Vector *w, bcm_CSRMatrix **P, int m
 		t = (int *) malloc(nzeros*sizeof(int));
 		edgeWght = (double *) malloc(nzeros*sizeof(double));
 
+		maxval = bcm_CSRMatrixFindMax(AH);
+		minval = bcm_CSRMatrixFindMin(AH);
 		bcm_CSRMatrixToCOO( AH , s, t, edgeWght);
 
+		fprintf(stdout, "max(A) = %f\nmin(A) = %f\n",maxval,minval);
 		c_matchLambdaTwoThirdeps(nrows_L,nzeros,s,t,edgeWght,lambda,p);
 
 		/* Free the memory */

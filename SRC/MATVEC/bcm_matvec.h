@@ -140,7 +140,8 @@ bcm_CSRMatrix * bcm_CSRMatrixTriU( bcm_CSRMatrix * A, int L );
 bcm_CSRMatrix * bcm_CSRMatrixTriL( bcm_CSRMatrix * A, int L );
 bcm_Vector * bcm_CSRMatrixDiag( bcm_CSRMatrix * A);
 bcm_CSRMatrix * bcm_CSRMatrixDiagScal( bcm_CSRMatrix * A, bcm_Vector *D );
-
+double bcm_CSRMatrixFindMax( bcm_CSRMatrix *A);
+double bcm_CSRMatrixFindMin( bcm_CSRMatrix *A);
 
 /* csr_matvec.c */
 int bcm_CSRMatrixMatvec ( double alpha , bcm_CSRMatrix *A , bcm_Vector *x , double beta , bcm_Vector *y );

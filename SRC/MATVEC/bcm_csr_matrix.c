@@ -1054,3 +1054,42 @@ bcm_CSRMatrix * bcm_CSRMatrixDiagScal( bcm_CSRMatrix * A, bcm_Vector *D )
 
   return B;
 }
+
+/*--------------------------------------------------------------------------
+ * bcm_CSRMatrixFindMax
+ * Returns the value of the maximum entry in A
+ *--------------------------------------------------------------------------*/
+
+ double bcm_CSRMatrixFindMax( bcm_CSRMatrix * A){
+	 int num_nnzA = bcm_CSRMatrixNumNonzeros( A );
+	 double *A_data   = bcm_CSRMatrixData(A);
+	 double res = A_data[0];
+
+	 for (int i = 1; i < num_nnzA; ++i) {
+	  if ( A_data[i] > res ) {
+			res = A_data[i];
+	  }
+	 }
+
+	 return(res);
+
+ }
+
+ /*--------------------------------------------------------------------------
+  * bcm_CSRMatrixFindMin
+  * Returns the value of the minimum entry in A
+  *--------------------------------------------------------------------------*/
+
+	double bcm_CSRMatrixFindMin( bcm_CSRMatrix * A){
+	 int num_nnzA = bcm_CSRMatrixNumNonzeros( A );
+ 	 double *A_data   = bcm_CSRMatrixData(A);
+ 	 double res = A_data[0];
+
+ 	 for (int i = 1; i < num_nnzA; ++i) {
+ 	  if ( A_data[i] < res ) {
+ 			res = A_data[i];
+ 	  }
+ 	 }
+
+ 	 return(res);
+  }
