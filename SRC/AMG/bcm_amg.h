@@ -105,6 +105,7 @@ typedef struct
     *     relax_type/coarse_solver = 1 ->  1 sweep of Gauss-Seidel
     *     relax_type/coarse_solver = 2 ->  1 sweep of symm. Gauss-Seidel
     *     relax_type/coarse_solver = 9 -> Direct Solve */
+	 int      coarserelax_number; /* number of iterations in case of iterative solver on the coarsest level */
 	 double		lambda; /* λ parameter for agg_match_type 3 and 4 */
 
    /* CR params */
@@ -135,6 +136,7 @@ typedef struct
 #define bcm_AMGBuildDataCRRelaxWeight(amg_data) ((amg_data)->CRrelax_weight)
 #define bcm_AMGBuildDataCRIterations(amg_data) ((amg_data)->CRit)
 #define bcm_AMGBuildDataCRratio(amg_data) ((amg_data)->CRratio)
+#define bcm_AMGBuildDataCoarseRelaxNum(amg_data) ((amg_data)->coarserelax_number)
 #define bcm_AMGBuildDataCSRMatrix(amg_data) ((amg_data)->A)
 #define bcm_AMGBuildDataSmoothVector(amg_data) ((amg_data)->w)
 
@@ -182,6 +184,7 @@ int bcm_AMGBuildSetCRRelaxWeight(void *data, double crrelax_weight);
 int bcm_AMGBuildSetCRIterations(void *data, int criterations);
 int bcm_AMGBuildSetCRRatio(void *data, double crratio);
 int bcm_AMGBuildSetLambda(void * data, double lambda);
+int bcm_AMGBuildSetCoarseRelaxNum(void *data, int coarserelax_number);
 int bcm_AMGBuildDataDestroy(void *data);
 bcm_AMGHierarchy *bcm_AMGHierarchyCreate(int maxlevels);
 int bcm_AMGHierarchyInitialize(bcm_AMGHierarchy *amg_hierarchy);
