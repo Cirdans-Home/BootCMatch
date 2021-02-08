@@ -34,6 +34,34 @@
 #include "bcm.h"
 #include "ioutil.h"
 
+void dump_on_file(const char *prefix, bcm_BootAMG *boot_amg)
+{
+  int j,k;
+  bcm_AMGHierarchy **Harray;
+  Harray=bcm_BootAMGHarray(boot_amg);
+  bcm_CSRMatrix    **A_array;
+  bcm_CSRMatrix    **P_array;
+  bcm_CSRMatrix    **L_array;
+  bcm_CSRMatrix    **U_array;
+  bcm_Vector       **D_array;
+
+  for (k=0; k<bcm_BootAMGNHrc(boot_amg); k++) {
+    A_array           = bcm_AMGHierarchyAArray(Harray[k]);
+    P_array           = bcm_AMGHierarchyPArray(Harray[k]);
+    L_array           = bcm_AMGHierarchyLArray(Harray[k]);
+    U_array           = bcm_AMGHierarchyUArray(Harray[k]);
+    D_array           = bcm_AMGHierarchyDArray(Harray[k]);
+    int num_levels    = bcm_AMGHierarchyNumLevels(Harray[k]);
+    char filename[81];
+    for (j=0; j<num_levels; j++) {
+      sprintf(filename,"%s-P-l%3.3d.mtx",prefix,j);
+      if (P_array[j]!=NULL) bcm_CSRMatrixPrintMM(P_array[j],filename);
+      sprintf(filename,"%s-AC-l%3.3d.mtx",prefix,j);
+      bcm_CSRMatrixPrintMM(A_array[j],filename);
+    }
+
+  }
+}
 typedef struct {
   int matrixformat;
   char *matrixfile;
@@ -360,6 +388,8 @@ int  main(int argc, char *argv[])
      bcm_VectorDestroy(soltrue);
 
    }
+
+   dump_on_file("BCM-",boot_amg);
 
    free(num_grid_sweeps);
    free_inparms(&inparms);
